@@ -1,0 +1,328 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "微信"
+    },
+    {
+      "name": "mainTabBar_wechat",
+      "value": "微信"
+    },
+    {
+      "name": "mainTabBar_contacts",
+      "value": "通讯录"
+    },
+    {
+      "name": "mainTabBar_found",
+      "value": "发现"
+    },
+    {
+      "name": "mainTabBar_mine",
+      "value": "我"
+    },
+    {
+      "name": "mainTabBarTitle_wechat",
+      "value": "微信"
+    },
+    {
+      "name": "mainTabBarTitle_contacts",
+      "value": "通讯录"
+    },
+    {
+      "name": "mainTabBarTitle_found",
+      "value": "发现"
+    },
+    {
+      "name": "mainTabBarTitle_mine",
+      "value": "我"
+    },
+    {
+      "name": "new_friend",
+      "value": "新的朋友"
+    },
+    {
+      "name": "just_chat_friend",
+      "value": "仅聊天的朋友"
+    },
+    {
+      "name": "chat_group",
+      "value": "群聊"
+    },
+    {
+      "name": "contact_tag",
+      "value": "标签"
+    },
+    {
+      "name": "official_account",
+      "value": "公众号"
+    },
+    {
+      "name": "service_account",
+      "value": "服务号"
+    },
+    {
+      "name": "enterprise_we_chat_contact",
+      "value": "企业微信联系人"
+    },
+    {
+      "name": "enterprise_we_chat_notify_contact",
+      "value": "企业微信通知"
+    },
+    {
+      "name": "moments",
+      "value": "朋友圈"
+    },
+    {
+      "name": "channels",
+      "value": "视频号"
+    },
+    {
+      "name": "live_stream",
+      "value": "直播"
+    },
+    {
+      "name": "scan",
+      "value": "扫一扫"
+    },
+    {
+      "name": "listen",
+      "value": "听一听"
+    },
+    {
+      "name": "top_stories",
+      "value": "看一看"
+    },
+    {
+      "name": "search",
+      "value": "搜一搜"
+    },
+    {
+      "name": "nearby",
+      "value": "附件"
+    },
+    {
+      "name": "game",
+      "value": "游戏"
+    },
+    {
+      "name": "mini_programs",
+      "value": "小程序"
+    },
+    {
+      "name": "pay_and_services",
+      "value": "服务"
+    },
+    {
+      "name": "favorites",
+      "value": "收藏"
+    },
+    {
+      "name": "my_posts",
+      "value": "朋友圈"
+    },
+    {
+      "name": "cards_and_offers",
+      "value": "卡包"
+    },
+    {
+      "name": "sticker_gallery",
+      "value": "表情"
+    },
+    {
+      "name": "settings",
+      "value": "设置"
+    },
+    {
+      "name": "we_chat_account",
+      "value": "微信号:"
+    },
+    {
+      "name": "state",
+      "value": "状态"
+    },
+    {
+      "name": "friend_count",
+      "value": "%d个朋友"
+    },
+    {
+      "name": "more_friend_count",
+      "value": "等%d个朋友"
+    },
+    {
+      "name": "login",
+      "value": "登录"
+    },
+    {
+      "name": "register",
+      "value": "注册"
+    },
+    {
+      "name": "register_by_phone",
+      "value": "手机号注册"
+    },
+    {
+      "name": "register_name_input_placeholder",
+      "value": "例如：陈晨"
+    },
+    {
+      "name": "register_name_input",
+      "value": "昵称"
+    },
+    {
+      "name": "register_area_select_placeholder",
+      "value": "请选择国家/地区"
+    },
+    {
+      "name": "register_area_input",
+      "value": "国家/地区"
+    },
+    {
+      "name": "register_phone_input_placeholder",
+      "value": "请填写手机号"
+    },
+    {
+      "name": "register_phone_input",
+      "value": "手机号"
+    },
+    {
+      "name": "register_password_input_placeholder",
+      "value": "请填写密码"
+    },
+    {
+      "name": "register_password_input",
+      "value": "密码"
+    },
+    {
+      "name": "register_read_and_agree",
+      "value": "我已阅读并同意"
+    },
+    {
+      "name": "app_agree_agreement",
+      "value": "《软件许可及服务协议》"
+    },
+    {
+      "name": "register_message_gather_tip",
+      "value": "本页面收集的信息仅用于注册账号"
+    },
+    {
+      "name": "agree_and_continue",
+      "value": "同意并继续"
+    },
+    {
+      "name": "account_login",
+      "value": "微信号/QQ号/邮箱登录"
+    },
+    {
+      "name": "login_account_input_name",
+      "value": "账号"
+    },
+    {
+      "name": "account_input_placeholder",
+      "value": "请填写微信号/QQ号/邮箱"
+    },
+    {
+      "name": "password_input_placeholder",
+      "value": "请填写微信密码"
+    },
+    {
+      "name": "password_input_name",
+      "value": "密码"
+    },
+    {
+      "name": "login_by_phone_number",
+      "value": "用手机号登录"
+    },
+    {
+      "name": "account_login_statement",
+      "value": "上述微信号/QQ号/邮箱仅用于登录验证"
+    },
+    {
+      "name": "agree_and_login",
+      "value": "同意并登录"
+    },
+    {
+      "name": "found_password",
+      "value": "找回密码"
+    },
+    {
+      "name": "emergency_freezing",
+      "value": "紧急冻结"
+    },
+    {
+      "name": "security_center",
+      "value": "安全中心"
+    },
+    {
+      "name": "login_phone",
+      "value": "手机号"
+    },
+    {
+      "name": "login_phone_input_placeholder",
+      "value": "请填写手机号"
+    },
+    {
+      "name": "login_by_account",
+      "value": "用微信号/QQ号/邮箱登录"
+    },
+    {
+      "name": "phone_login",
+      "value": "手机号登录"
+    },
+    {
+      "name": "phone_login_statement",
+      "value": "上述手机号仅用于登录验证"
+    },
+    {
+      "name": "more_options",
+      "value": "更多选项"
+    },
+    {
+      "name": "login_by_verify_code",
+      "value": "用短信验证码登录"
+    },
+    {
+      "name": "login_by_password",
+      "value": "用密码登录"
+    },
+    {
+      "name": "verify_code",
+      "value": "验证码"
+    },
+    {
+      "name": "verify_code_placeholder",
+      "value": "请填写验证码"
+    },
+    {
+      "name": "get_verify_code",
+      "value": "获取验证码"
+    },
+    {
+      "name": "get_verify_code_countdown",
+      "value": "%d秒后重试"
+    },
+    {
+      "name": "phone_number_confirm",
+      "value": "确认手机号码"
+    },
+    {
+      "name": "verify_code_send_tip",
+      "value": "我们将发送验证码短信到下面的号码："
+    },
+    {
+      "name": "cancel",
+      "value": "取消"
+    },
+    {
+      "name": "confirm",
+      "value": "确定"
+    }
+  ]
+}

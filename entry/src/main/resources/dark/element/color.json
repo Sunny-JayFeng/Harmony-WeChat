@@ -1,0 +1,168 @@
+{
+  "color": [
+    {
+      "name": "start_window_background",
+      "value": "#000000"
+    },
+    {
+      "name": "background_color",
+      "value": "#111111"
+    },
+    {
+      "name": "border_color",
+      "value": "#2c2c2c"
+    },
+    {
+      "name": "tab_selected_color",
+      "value": "#07C160"
+    },
+    {
+      "name": "font_color",
+      "value": "#A6A6A6"
+    },
+    {
+      "name": "contact_item_bkg_color",
+      "value": "#191919"
+    },
+    {
+      "name": "chat_item_normal_background_color",
+      "value": "#191919"
+    },
+    {
+      "name": "chat_item_top_background_color",
+      "value": "#242424"
+    },
+    {
+      "name": "chat_item_time_font_color",
+      "value": "#5b5b5b"
+    },
+    {
+      "name": "chat_item_top_time_font_color",
+      "value": "#676767"
+    },
+    {
+      "name": "chat_item_top_latest_message_font_color",
+      "value": "#656565"
+    },
+    {
+      "name": "chat_item_latest_message_font_color",
+      "value": "#616161"
+    },
+    {
+      "name": "found_message_font_color",
+      "value": "#909090"
+    },
+    {
+      "name": "found_item_bkg_color",
+      "value": "#191919"
+    },
+    {
+      "name": "mine_card_font_color",
+      "value": "#8B8B8B"
+    },
+    {
+      "name": "mine_card_name_font_color",
+      "value": "#CFCFCF"
+    },
+    {
+      "name": "mine_card_bkg_color",
+      "value": "#000000"
+    },
+    {
+      "name": "register_button_color",
+      "value": "#191919"
+    },
+    {
+      "name": "register_button_text_color",
+      "value": "#B5B5B5"
+    },
+    {
+      "name": "register_bkg_color",
+      "value": "#000000"
+    },
+    {
+      "name": "register_text_input_placeholder_color",
+      "value": "#585858"
+    },
+    {
+      "name": "register_text_input_border_color",
+      "value": "#222222"
+    },
+    {
+      "name": "register_area_font_color",
+      "value": "#bcbcbc"
+    },
+    {
+      "name": "register_agreement_font_color",
+      "value": "#5d5d5d"
+    },
+    {
+      "name": "register_agreement_link_font_color",
+      "value": "#888EA7"
+    },
+    {
+      "name": "agree_register_button_color",
+      "value": "#2b2b2b"
+    },
+    {
+      "name": "agree_register_button_font_color",
+      "value": "#555555"
+    },
+    {
+      "name": "change_login_type_button_color",
+      "value": "#647181"
+    },
+    {
+      "name": "login_statement_font_color",
+      "value": "#555555"
+    },
+    {
+      "name": "login_page_button_color",
+      "value": "#242424"
+    },
+    {
+      "name": "login_page_clickable_button_color",
+      "value": "#07c160"
+    },
+    {
+      "name": "login_button_font_color",
+      "value": "#494949"
+    },
+    {
+      "name": "login_page_divider_color",
+      "value": "#191919"
+    },
+    {
+      "name": "get_verify_button_bkg_color",
+      "value": "#242424"
+    },
+    {
+      "name": "get_verify_button_font_color",
+      "value": "#bcbcbc"
+    },
+    {
+      "name": "countdown_font_color",
+      "value": "#5C5C5C"
+    },
+    {
+      "name": "custom_dialog_bkg_color",
+      "value": "#2C2C2C"
+    },
+    {
+      "name": "custom_dialog_title_font_color",
+      "value": "#d6d6d6"
+    },
+    {
+      "name": "verify_code_send_tip_font_color",
+      "value": "#969696"
+    },
+    {
+      "name": "custom_dialog_cancel_font_color",
+      "value": "#ababab"
+    },
+    {
+      "name": "custom_dialog_confirm_font_color",
+      "value": "#7A93A9"
+    }
+  ]
+}
