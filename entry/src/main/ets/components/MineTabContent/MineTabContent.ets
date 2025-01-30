@@ -1,5 +1,5 @@
-import { UIConstantValue } from "constantvalue"
-import { MineItemDataType } from "../../uiDataTypes/UIDataType"
+import { AppStorageKey, UIConstantValue } from "constantvalue"
+import { MineItemDataType } from "../../type/uiDataTypes/UIDataType"
 import MineContentListDataViewModel from "../../uiDataViewModels/mine/MineContentListDataViewModel"
 import MineCard from "./MineCard"
 import MineItem from "./MineItem"
@@ -16,9 +16,7 @@ export default struct MineTabContent {
   build() {
     Column() {
       Column() {
-        MineCard({
-          mineCardData: MineContentListDataViewModel.getMineCardData()
-        })
+        MineCard()
         Row()
           .width(UIConstantValue.WIDTH_PERCENT_100)
           .height(UIConstantValue.HEIGHT_10)

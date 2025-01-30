@@ -1,4 +1,4 @@
-import { MineCardDataType, MineItemDataType } from "../../uiDataTypes/UIDataType";
+import { MineItemDataType } from "../../type/uiDataTypes/UIDataType";
 
 /**
  * 我界面数据
@@ -47,33 +47,9 @@ export default class MineContentListDataViewModel {
       }
     ]
   ]
-  private static mineCardData: MineCardDataType = { // 临时设置，后面请求响应调用 set 接口设置
-    account: 'xiaohaitun',
-    userName: '小海豚',
-    state: 0,
-    avatar: $r('app.media.testAvatar'),
-    friendNewStateCount: 5,
-    friendAvatarList: [
-      $r('app.media.testAvatar'),
-      $r('app.media.testAvatar'),
-      $r('app.media.testAvatar')
-    ]
-  }
 
   static getMineContentDataList(): Array<MineItemDataType[]> {
     return MineContentListDataViewModel.dataList
-  }
-
-  static setMineCardData(mineCardData: MineCardDataType) {
-    MineContentListDataViewModel.mineCardData = mineCardData;
-  }
-
-  static getMineCardData(): MineCardDataType {
-    return MineContentListDataViewModel.mineCardData;
-  }
-
-  static hasState(): boolean {
-    return MineContentListDataViewModel.mineCardData.state !== 0;
   }
 
 }

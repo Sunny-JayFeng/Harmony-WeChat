@@ -1,65 +1,84 @@
-import { FontConstantValue, UIConstantValue } from 'constantvalue';
-import PageContent from '../components/PageComponent/PageContent';
-import { IMainTabBarDataType } from '../uiDataTypes/UIDataType';
-import MainTabBarDataViewModel from '../uiDataViewModels/MainTabBarDataViewModel';
-import MineContentListDataViewModel from '../uiDataViewModels/mine/MineContentListDataViewModel';
+import { photoAccessHelper } from '@kit.MediaLibraryKit';
+import fileIo from '@ohos.file.fs';
+import fs from '@ohos.file.fs'
+import { image } from '@kit.ImageKit';
+import axios, { AxiosError, AxiosProgressEvent, AxiosResponse, FormData } from '@ohos/axios';
+import { User } from '../type/serviceDataTypes/serviceDataTypes';
+import { UploadFilesResponseData } from '../type/responseDataTypes/responseDataTypes';
+import { request } from '../request/request';
 
 @Entry
 @Component
 struct Index {
-  @State currentSelectedIndex: number = 0;
+  @State filePath: string = '';
 
-  @Builder
-  tabBarBuilder(tabItem: IMainTabBarDataType, index: number) {
-    Column() {
-      Image(index === this.currentSelectedIndex ? tabItem.selectedIcon : tabItem.normalIcon)
-        .width(UIConstantValue.WIDTH_36)
-        .height(UIConstantValue.HEIGHT_36)
-        .objectFit(ImageFit.Contain)
-      Text(tabItem.tabName)
-        .fontSize(FontConstantValue.FONT_SIZE_12)
-        .fontColor(index === this.currentSelectedIndex ? $r('app.color.tab_selected_color') :
-        $r('app.color.font_color'))
-    }
+  async uploadFile() {
+
+    // 选择相册的文件
+    const photoPicker = new photoAccessHelper.PhotoViewPicker()
+    const pickerRes = await photoPicker.select({
+      MIMEType: photoAccessHelper.PhotoViewMIMETypes.IMAGE_TYPE,
+      maxSelectNumber: 1
+    })
+    const photoUri = pickerRes.photoUris[0]
+    const photoFile = fs.openSync(photoUri, fs.OpenMode.READ_ONLY);
+    // 将选择的文件拷贝到沙箱 cache
+    let newPath = getContext(this).cacheDir + '/' + photoFile.name;
+    fs.copyFileSync(photoFile.fd, newPath);
+
+    // 构建数据
+    let formData = new FormData();
+    let realFileUri = 'internal://cache/' + photoFile.name;
+    formData.append('files', realFileUri);
+
+    // 发起上传请求
+    request.post<UploadFilesResponseData, UploadFilesResponseData, FormData>('/file/uploadAvatarFile',
+      formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'request-from': 'harmony-application'
+        },
+        context: getContext(this),
+        onUploadProgress: (progressEvent: AxiosProgressEvent): void => {
+          console.log('uploadFile,文件上传中')
+        },
+      })
+      .then((result: UploadFilesResponseData) => {
+        AlertDialog.show({ message: JSON.stringify(result, null, 2) })
+        // AlertDialog.show({ message: JSON.stringify(result.responseData.uploadFileNameList, null, 2) })
+      })
+      .catch((error: AxiosError) => {
+        AlertDialog.show({ message: JSON.stringify(error, null, 2) })
+      })
+  }
+
+  testRegister() {
+    let user: User = new User();
+    user.account = 'dolphin';
+    user.password = 'dolphin';
+    user.phoneNumber = '180****6783';
+    user.userName = '小海豚';
+    request.post<string, AxiosResponse<string>, User>('http://192.168.56.1:8888/wechat/user/register', user, {
+      headers: {
+        'Content-Type': 'application/json; charset=UTF-8',
+        'request-from': 'harmony-application'
+      },
+      context: getContext(this)
+    }).then((result: AxiosResponse<string>) => {
+      AlertDialog.show({ message: JSON.stringify(result, null, 2) })
+    }).catch((error: AxiosError) => {
+      AlertDialog.show({ message: JSON.stringify(error, null, 2) })
+    })
   }
 
   build() {
-    Column() {
-      if (MainTabBarDataViewModel.isMineTab(this.currentSelectedIndex)) {
-        Row()
-          .width('100%')
-          .backgroundColor(MineContentListDataViewModel.hasState() ? $r('app.color.mine_card_has_state_bkg_color') :
-          $r('app.color.mine_card_bkg_color'))
-          .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP])
-          .offset({ x: 0, y: 0.2 })
-      }
-
-      Tabs({ barPosition: BarPosition.End, index: $$this.currentSelectedIndex }) {
-        ForEach(MainTabBarDataViewModel.getTabBarDataList(), (item: IMainTabBarDataType, index: number) => {
-          TabContent() {
-            Column() {
-              PageContent({
-                title: item.tabTitle.valueOf() as string,
-                theTabIndex: index
-              })
-            }
-          }
-          .tabBar(this.tabBarBuilder(item, index))
-          .border({
-            width: {
-              bottom: UIConstantValue.BORDER_WIDTH_0_5
-            },
-            color: $r('app.color.border_color')
-          })
-        },
-          (item: IMainTabBarDataType) => item.id.toString())
-      }
+    Column({ space: 10 }) {
+      Button('上传文件').onClick(() => {
+        this.uploadFile()
+      })
+      Button('注册').onClick(() => {
+        this.testRegister();
+      })
     }
-    .backgroundColor($r('app.color.background_color'))
-    .height(UIConstantValue.HEIGHT_PERCENT_100)
-    .width(UIConstantValue.WIDTH_PERCENT_100)
-    .expandSafeArea([SafeAreaType.SYSTEM],
-      MainTabBarDataViewModel.isMineTab(this.currentSelectedIndex) ? [SafeAreaEdge.BOTTOM] :
-        [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM]) // 区域扩展
   }
 }

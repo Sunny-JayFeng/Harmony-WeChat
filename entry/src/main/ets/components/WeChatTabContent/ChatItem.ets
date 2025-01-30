@@ -1,5 +1,5 @@
 import { FontConstantValue, UIConstantValue } from 'constantvalue';
-import { ChatItemDataType } from '../../uiDataTypes/UIDataType'
+import { ChatItemDataType } from '../../type/uiDataTypes/UIDataType'
 
 @Component
 export default struct ChartItem {

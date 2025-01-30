@@ -1,4 +1,4 @@
-import { ContactDataType } from "../../uiDataTypes/UIDataType";
+import { ContactDataType } from "../../type/uiDataTypes/UIDataType";
 
 export default class ContactClassifyDataViewModel {
   private static readonly classifyDataList: ContactDataType[] = [

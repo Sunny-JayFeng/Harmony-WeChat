@@ -40,16 +40,6 @@ export interface FoundItemDataType {
   avatarImg: string; // 右侧的用户头像-例如朋友圈有更新时的头像
 }
 
-// 我 tab-用户卡片信息
-export interface MineCardDataType {
-  account: string; // 微信号
-  userName: string; // 微信名
-  state: number; // 状态。 0 表示没有状态
-  avatar: string | Resource; // 头像
-  friendNewStateCount: number; // 更新了状态的朋友数量
-  friendAvatarList: string[] | Resource[]; // 更新了状态的朋友的头像，最多显示3个头像
-}
-
 // 我 tab 单个 item
 export interface MineItemDataType {
   id: number,

@@ -4,6 +4,9 @@ import { window } from '@kit.ArkUI';
 import { AppUtil } from '@pura/harmony-utils';
 import { initialize } from '@hw-agconnect/hmcore';
 import { buffer } from '@kit.ArkTS';
+import dataPreferences from '@ohos.data.preferences'
+
+
 
 export default class EntryAbility extends UIAbility {
   onCreate(want: Want, launchParam: AbilityConstant.LaunchParam): void {
@@ -21,15 +24,21 @@ export default class EntryAbility extends UIAbility {
       .then((value: Uint8Array) => {
         let json: string = buffer.from(value as ArrayBufferLike).toString('utf8')
         initialize(this.context, JSON.parse(json));
-      }).catch((error: Object)=>{
-      hilog.error(0x0000, 'testTag', 'Failed to initialize AGC SDK. Cause: %{public}s', JSON.stringify(error) ?? '');
-    })
+      })
+      .catch((error: Object) => {
+        hilog.error(0x0000, 'testTag', 'Failed to initialize AGC SDK. Cause: %{public}s', JSON.stringify(error) ?? '');
+      })
 
 
     // Main window is created, set main page for this ability
     hilog.info(0x0000, 'testTag', '%{public}s', 'Ability onWindowStageCreate');
 
-    windowStage.loadContent('pages/HomePage', (err) => {
+    // 获取 preferences 对象
+    let options: dataPreferences.Options = { name: 'userID' };
+    let preferences: dataPreferences.Preferences = dataPreferences.getPreferencesSync(this.context, options);
+    const userID = preferences.getSync("currentUserID", -1);
+
+    windowStage.loadContent(userID !== -1 ? 'pages/MainPage' : 'pages/HomePage', (err) => {
       if (err.code) {
         hilog.error(0x0000, 'testTag', 'Failed to load the content. Cause: %{public}s', JSON.stringify(err) ?? '');
         return;

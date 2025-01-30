@@ -1,5 +1,17 @@
 import { router } from '@kit.ArkUI';
-import { FontConstantValue, RouterUrlConstantValue, UIConstantValue } from 'constantvalue';
+import {
+  FontConstantValue,
+  RequestURIConstantValue,
+  RouterUrlConstantValue,
+  UIConstantValue
+} from 'constantvalue';
+import photoAccessHelper from '@ohos.file.photoAccessHelper';
+import fs from '@ohos.file.fs'
+import { AxiosError, FormData } from '@ohos/axios';
+import { request } from '../../request/request';
+import { ResponseUserData, UploadFilesResponseData } from '../../type/responseDataTypes/responseDataTypes';
+import { User } from '../../type/serviceDataTypes/serviceDataTypes';
+import dataPreferences from '@ohos.data.preferences'
 
 @Entry
 @Component
@@ -8,20 +20,23 @@ struct RegisterPage {
   @Provide('phoneNumber') phoneNumber: string = '';
   @Provide('password') password: string = '';
   @Provide('agreeAgreement') agreeAgreement: boolean = false;
+  private avatarFileName: string = ''; // 头像文件名(上传到服务器后服务器返回的)
+  @State chooseAvatarFileUri: string = ''; // 选择的头像文件的 uri (本地)
 
   buttonClickable(): boolean {
-    return this.weChatNameIsRight() && this.phoneNumberIsRight() && this.passwordIsRight() && this.agreeAgreement;
+    return this.weChatNameFormatIsRight() && this.phoneNumberFormatIsRight() && this.passwordFormatIsRight() &&
+    this.agreeAgreement;
   }
 
-  weChatNameIsRight(): boolean {
+  weChatNameFormatIsRight(): boolean {
     return this.weChatName !== ''
   }
 
-  phoneNumberIsRight(): boolean {
+  phoneNumberFormatIsRight(): boolean {
     return this.phoneNumber !== '' // 按需校验手机号规则
   }
 
-  passwordIsRight(): boolean {
+  passwordFormatIsRight(): boolean {
     return this.password !== ''
   }
 
@@ -33,8 +48,53 @@ struct RegisterPage {
   }
 
   // 头像选择
-  onAvatarSelectorClicked() {
+  async onAvatarSelectorClicked() {
+    // 选择头像
+    const photoPicker = new photoAccessHelper.PhotoViewPicker()
+    const avatarPickerResult = await photoPicker.select({
+      MIMEType: photoAccessHelper.PhotoViewMIMETypes.IMAGE_TYPE,
+      maxSelectNumber: 1
+    })
+    if (avatarPickerResult.photoUris.length === 0) {
+      return;
+    }
+    const avatarUri = avatarPickerResult.photoUris[0]
+    const avatarFile = fs.openSync(avatarUri, fs.OpenMode.READ_ONLY);
+    this.chooseAvatarFileUri = avatarUri
 
+    // 将选择的头像拷贝到沙箱 cache
+    let cacheFilePath = getContext(this).cacheDir + '/' + avatarFile.name
+    fs.copyFileSync(avatarFile.fd, cacheFilePath)
+
+    // 构建数据上传到服务器
+    let formData = new FormData()
+    let uploadFileUri = 'internal://cache/' + avatarFile.name
+    formData.append('files', uploadFileUri)
+
+    // 上传到服务器
+    request.post<UploadFilesResponseData, UploadFilesResponseData, FormData>(RequestURIConstantValue.UPLOAD_AVATAR_FILE_URI,
+      formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        },
+        context: getContext(this)
+      })
+      .then((responseData: UploadFilesResponseData) => {
+        if (responseData.requestSuccess) {
+          if (responseData.uploadFileNameList.length === 0) {
+            // 打印日志
+            AlertDialog.show({ message: $r('app.string.avatar_file_upload_failed') })
+            return
+          }
+          this.avatarFileName = responseData.uploadFileNameList[0]
+        } else {
+          // 打印日志
+          AlertDialog.show({ message: $r('app.string.avatar_file_upload_failed') })
+        }
+      })
+      .catch((error: AxiosError) => {
+        // 日志打印
+      })
   }
 
   // 暂不支持国家/地区选择
@@ -44,6 +104,42 @@ struct RegisterPage {
     if (!this.buttonClickable()) { // 再次校验
       return
     }
+    let user: User = new User()
+    user.userName = this.weChatName
+    user.phoneNumber = this.phoneNumber
+    user.password = this.password
+    user.avatar = this.avatarFileName
+
+    request.post<ResponseUserData, ResponseUserData, User>(RequestURIConstantValue.REQUEST_REGISTER_USER, user)
+      .then((responseData: ResponseUserData) => {
+        if (responseData.requestSuccess) {
+          // 注册成功, 打印日志, 自动跳转到主页
+          let responseUser: User = responseData.user;
+          // 登录后持久化 id 到本地, 后续不需要再登录
+          // 获取 preferences 对象
+          let options: dataPreferences.Options = { name: 'userID' };
+          let preferences: dataPreferences.Preferences = dataPreferences.getPreferencesSync(getContext(), options);
+          preferences.putSync("currentUserID", responseUser.id)
+          preferences.flush();
+          router.replaceUrl({
+            url: RouterUrlConstantValue.MAIN_PAGE
+          })
+        } else {
+          if (responseData.failCode === 3) {
+            // 账号已存在, 是否直接登录
+            AlertDialog.show({ message: $r('app.string.account_exist') })
+            return;
+          }
+          // 日志打印
+          // 弹框提示错误信息
+          AlertDialog.show({ message: JSON.stringify(responseData, null, 2) })
+        }
+      })
+      .catch((error: AxiosError) => {
+        // 日志打印
+        AlertDialog.show({ message: JSON.stringify(error, null, 2) })
+      })
+
   }
 
   build() {
@@ -66,12 +162,29 @@ struct RegisterPage {
         top: UIConstantValue.MARGIN_PERCENT_15
       })
 
-      // 头像文件选择器
-      ImageSelector()
-        .margin({
-          top: UIConstantValue.MARGIN_PERCENT_8
-        })
-        .onClick(this.onAvatarSelectorClicked)
+      // 头像文件
+      if (this.chooseAvatarFileUri === '') {
+        ImageSelector()
+          .margin({
+            top: UIConstantValue.MARGIN_PERCENT_8
+          })
+          .onClick(() => {
+            this.onAvatarSelectorClicked()
+          })
+      } else {
+        Image(this.chooseAvatarFileUri)
+          .objectFit(ImageFit.Contain)
+          .width(UIConstantValue.WIDTH_65)
+          .height(UIConstantValue.HEIGHT_65)
+          .borderRadius(UIConstantValue.BORDER_RADIUS_10)
+          .margin({
+            top: UIConstantValue.MARGIN_PERCENT_8
+          })
+          .onClick(() => {
+            this.onAvatarSelectorClicked()
+          })
+      }
+
 
       // 输入组件
       InputItemsWrapper()
@@ -96,7 +209,11 @@ struct RegisterPage {
         .margin({
           top: UIConstantValue.MARGIN_PERCENT_6
         })
-        .onClick(this.onRegisterButtonClicked)
+        .onClick(async () => {
+          if (this.buttonClickable()) {
+            this.onRegisterButtonClicked()
+          }
+        })
 
     }
     .padding({

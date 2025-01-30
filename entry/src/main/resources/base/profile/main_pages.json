@@ -4,7 +4,6 @@
     "pages/HomePage",
     "pages/register/RegisterPage",
     "pages/MainPage",
-    "pages/login/LoginPage",
     "pages/login/LoginByAccount",
     "pages/login/LoginByPhoneNumberStepOne",
     "pages/login/LoginByPhoneNumberStepTwo"

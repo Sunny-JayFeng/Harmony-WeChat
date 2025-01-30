@@ -21,10 +21,10 @@ struct LoginByPhoneNumber {
   @State areaNumber: string = '+86'
 
   buttonClickable(): boolean {
-    return this.phoneNumberIsRight()
+    return this.phoneNumberFormatIsRight()
   }
 
-  phoneNumberIsRight(): boolean {
+  phoneNumberFormatIsRight(): boolean {
     return this.phoneNumber != ''
   }
 
@@ -77,7 +77,8 @@ struct LoginByPhoneNumber {
           itemName: $r('app.string.register_area_input'),
           valueColor: $r('app.color.register_area_font_color'),
           inputBorderColor: $r('app.color.border_color'),
-          itemValue: this.area
+          itemValue: this.area,
+          inputEnabled: false
         })
         ItemInput({
           placeholder: $r("app.string.login_phone_input_placeholder"),
@@ -112,7 +113,9 @@ struct LoginByPhoneNumber {
           buttonText: $r('app.string.agree_and_continue'),
           buttonClickable: this.buttonClickable()
         }).onClick(() => {
-          this.onAgreeButtonClicked()
+          if (this.buttonClickable()) {
+            this.onAgreeButtonClicked()
+          }
         })
       }
       .width(UIConstantValue.WIDTH_PERCENT_100)

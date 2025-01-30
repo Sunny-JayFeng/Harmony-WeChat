@@ -1,4 +1,4 @@
-import { FoundItemDataType } from "../../uiDataTypes/UIDataType";
+import { FoundItemDataType } from "../../type/uiDataTypes/UIDataType";
 
 /**
  * 发现列表

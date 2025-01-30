@@ -1,10 +1,21 @@
-import cloud, { VerifyCodeAction } from '@hw-agconnect/cloud';
-import { BusinessConstantValue, FontConstantValue, RouterUrlConstantValue, UIConstantValue } from 'constantvalue';
+import cloud, { SignInResult, VerifyCodeAction } from '@hw-agconnect/cloud';
+import {
+  BusinessConstantValue,
+  FontConstantValue,
+  RequestURIConstantValue,
+  RouterUrlConstantValue,
+  UIConstantValue
+} from 'constantvalue';
 import ItemInput from '../register/RegisterPage';
 import { AgreeButton, ChangeLoginType, CloseIcon, LoginTypeText, SelfHelpText, StatementTip } from './BaseComponent';
 import { BusinessError } from '@kit.BasicServicesKit';
 import { router } from '@kit.ArkUI';
 import { PhoneMessage } from './LoginByPhoneNumberStepOne';
+import { request } from '../../request/request';
+import { ResponseUserData } from '../../type/responseDataTypes/responseDataTypes';
+import { AxiosError } from '@ohos/axios';
+import { User } from '../../type/serviceDataTypes/serviceDataTypes';
+import dataPreferences from '@ohos.data.preferences'
 
 @Entry
 @Component
@@ -44,15 +55,22 @@ struct LoginByPhoneNumberStepTwo {
   }
 
   buttonClickable(): boolean {
-    return this.phoneNumberIsRight() && this.passwordValueIsRight()
+    if (this.loginByVerifyCode) {
+      return this.phoneNumberFormatIsRight() && this.verifyCodeFormatIsRight()
+    }
+    return this.phoneNumberFormatIsRight() && this.passwordFormatIsRight()
   }
 
-  phoneNumberIsRight(): boolean {
-    return this.phoneNumber !== ''
+  phoneNumberFormatIsRight(): boolean {
+    return this.phoneNumber != ''
   }
 
-  passwordValueIsRight(): boolean {
-    return this.passwordValue !== ''
+  verifyCodeFormatIsRight() {
+    return this.verifyCode != '';
+  }
+
+  passwordFormatIsRight() {
+    return this.passwordValue != ''
   }
 
   // 点击关闭
@@ -64,7 +82,103 @@ struct LoginByPhoneNumberStepTwo {
 
   // 点击登录
   onLoginButtonClicked() {
+    // 验证码登录
+    if (this.loginByVerifyCode) {
+      cloud.auth().signIn({
+        credentialInfo: {
+          kind: 'phone',
+          phoneNumber: this.phoneNumber,
+          countryCode: this.areaNumber,
+          verifyCode: this.verifyCode
+        }
+      })
+        .then((result: SignInResult) => {
+          // 验证码校验通过, 触发登录
+          this.verifyCodeLogin();
+        })
+        .catch((error: BusinessError) => {
+          if (error.code === 203818129) {
+            AlertDialog.show({ message: $r('app.string.verification_code_is_incorrect') })
+            return;
+          }
+          AlertDialog.show({ message: JSON.stringify(error, null, 2) })
+        })
+      return;
+    }
+    // 手机号密码登录
+    this.passwordLogin();
+  }
 
+  verifyCodeLogin() {
+    request.post<ResponseUserData, ResponseUserData>(RequestURIConstantValue.REQUEST_LOGIN_BY_PHONE_AND_VERIFY_CODE,
+      this.phoneNumber)
+      .then((responseData: ResponseUserData) => {
+        let responseUser: User = responseData.user;
+        if (responseData.requestSuccess && responseUser) {
+          this.onLoginSuccess(responseUser);
+          return;
+        }
+        // 失败
+        if (responseData.failCode === 1) { // 账号不存在
+          AlertDialog.show({ message: $r('app.string.account_not_exist') })
+          return;
+        }
+        // 打印日志信息
+        AlertDialog.show({ message: JSON.stringify(responseData, null, 2) })
+      })
+      .catch((error: AxiosError) => {
+        // 打印错误日志
+        AlertDialog.show({ message: JSON.stringify(error, null, 2) })
+      })
+  }
+
+  passwordLogin() {
+    request.post<ResponseUserData, ResponseUserData>(RequestURIConstantValue.REQUEST_LOGIN_BY_PHONE_AND_PASSWORD,
+      {
+        phoneNumber: this.phoneNumber,
+        password: this.passwordValue
+      })
+      .then((responseData: ResponseUserData) => {
+        let responseUser: User = responseData.user;
+        if (responseData.requestSuccess && responseUser) {
+          this.onLoginSuccess(responseUser)
+          return;
+        }
+        // 请求参数错误
+        if (responseData.failCode === 6) {
+          AlertDialog.show({ message: $r('app.string.request_params_error') })
+          return;
+        }
+        // 手机号未注册
+        if (responseData.failCode === 7) {
+          AlertDialog.show({ message: $r('app.string.phone_number_never_register') })
+          return;
+        }
+        // 密码错误
+        if (responseData.failCode === 2) {
+          AlertDialog.show({ message: $r('app.string.password_error') })
+          return;
+        }
+        // 其他错误, 打印错误日志
+        AlertDialog.show({ message: JSON.stringify(responseData, null, 2) })
+        return;
+      })
+      .catch((error: AxiosError) => {
+        // 打印错误日志
+        AlertDialog.show({ message: JSON.stringify(error, null, 2) })
+      })
+  }
+
+  onLoginSuccess(responseUser: User) {
+    // 登录成功
+    // 登录后持久化 id 到本地, 后续不需要再登录
+    let options: dataPreferences.Options = { name: 'userID' }
+    let preferences: dataPreferences.Preferences = dataPreferences.getPreferencesSync(getContext(), options)
+    preferences.putSync('currentUserID', responseUser.id)
+    preferences.flush()
+    router.replaceUrl({
+      url: RouterUrlConstantValue.MAIN_PAGE
+    })
   }
 
   // 点击获取验证码
@@ -85,7 +199,7 @@ struct LoginByPhoneNumberStepTwo {
       }
     }).then(verifyCodeResult => {
       this.startCountdown()
-      AlertDialog.show({ message: JSON.stringify(verifyCodeResult, null, 2) })
+      AlertDialog.show({ message: $r('app.string.verify_code_been_sent') })
     }).catch((error: BusinessError) => {
       AlertDialog.show({ message: JSON.stringify(error, null, 2) })
     })
@@ -122,7 +236,9 @@ struct LoginByPhoneNumberStepTwo {
     Column() {
       // 关闭按钮
       CloseIcon()
-        .onClick(this.onCloseButtonClicked)
+        .onClick(() => {
+          this.onCloseButtonClicked()
+        })
       // 登录类型文本
       Row() {
         LoginTypeText({
@@ -201,7 +317,14 @@ struct LoginByPhoneNumberStepTwo {
           buttonText: $r('app.string.login'),
           buttonClickable: this.buttonClickable()
         })
-          .onClick(this.onLoginButtonClicked)
+          .onClick(() => {
+            if (this.buttonClickable()) {
+              // 只是为了校验验证码, 所以先退出登录(正常应该是自己写一套验证码系统)
+              cloud.auth().signOut().then(() => {
+                this.onLoginButtonClicked()
+              })
+            }
+          })
       }
       .width(UIConstantValue.WIDTH_PERCENT_100)
       .justifyContent(FlexAlign.Center)

@@ -1,12 +1,12 @@
-import { FontConstantValue, UIConstantValue } from "constantvalue";
-import { MineCardDataType } from "../../uiDataTypes/UIDataType"
+import { AppStorageKey, FontConstantValue, RequestURIConstantValue, UIConstantValue } from "constantvalue";
+import { User } from "../../type/serviceDataTypes/serviceDataTypes";
 
 @Component
 export default struct MineCard {
-  @Prop mineCardData: MineCardDataType;
+  @StorageProp(AppStorageKey.CURRENT_LOGIN_USER) user: User = new User();
 
   hasState(): boolean {
-    return this.mineCardData.state !== 0;
+    return this.user.state !== 0;
   }
 
   build() {
@@ -14,7 +14,7 @@ export default struct MineCard {
       Row() {
         Row({ space: UIConstantValue.SPACE_10 }) {
           Column() {
-            Image(this.mineCardData.avatar)
+            Image(RequestURIConstantValue.REQUEST_AVATAR_IMG_URI + this.user.avatar)
               .width(UIConstantValue.WIDTH_65)
               .height(UIConstantValue.HEIGHT_65)
               .borderRadius(UIConstantValue.BORDER_RADIUS_10)
@@ -22,7 +22,7 @@ export default struct MineCard {
           .justifyContent(FlexAlign.Start)
 
           Column({ space: UIConstantValue.SPACE_10 }) {
-            Text(this.mineCardData.userName)
+            Text(this.user.userName)
               .fontSize(FontConstantValue.FONT_SIZE_18)
               .fontWeight(FontWeight.Bold)
               .fontColor(this.hasState() ? Color.White : $r('app.color.mine_card_name_font_color'))
@@ -31,7 +31,7 @@ export default struct MineCard {
                 .fontSize(FontConstantValue.FONT_SIZE_12)
                 .fontColor(this.hasState() ? $r('app.color.mine_card_has_state_font_color') :
                 $r('app.color.mine_card_font_color'))
-              Text(this.mineCardData.account)
+              Text(this.user.account)
                 .fontSize(FontConstantValue.FONT_SIZE_12)
                 .fontColor(this.hasState() ? $r('app.color.mine_card_has_state_font_color') :
                 $r('app.color.mine_card_font_color'))
@@ -40,7 +40,7 @@ export default struct MineCard {
 
             if (!this.hasState()) {
               NoStateComponent({
-                mineCardData: this.mineCardData
+                user: this.user
               })
             }
           }
@@ -84,7 +84,7 @@ export default struct MineCard {
 
 @Component
 struct StateComponent {
-  @Prop mineCardData: MineCardDataType;
+  @Prop user: User;
 
   build() {
     Column({ space: UIConstantValue.SPACE_5 }) {
@@ -154,80 +154,80 @@ struct StateComponent {
 
 @Component
 struct NoStateComponent {
-  @Prop mineCardData: MineCardDataType;
-  @State account: number = 0;
+  @Prop user: User;
+  @State count: number = 0;
 
-  aboutToAppear(): void {
-    this.account = this.mineCardData.friendNewStateCount;
-  }
+  // aboutToAppear(): void {
+  //   this.count = this.mineCardData.friendNewStateCount;
+  // }
 
   build() {
-    Row({ space: UIConstantValue.SPACE_10 }) {
-      Row() {
-        Image($r('app.media.mineTabAddStateIcon'))
-          .width(UIConstantValue.WIDTH_14)
-          .height(UIConstantValue.HEIGHT_14)
-        Text($r('app.string.state'))
-          .fontSize(FontConstantValue.FONT_SIZE_12)
-          .fontColor($r('app.color.mine_card_font_color'))
-      }
-      .border({
-        width: UIConstantValue.BORDER_WIDTH_0_5,
-        color: $r('app.color.border_color')
-      })
-      .borderRadius(UIConstantValue.BORDER_RADIUS_20)
-      .padding({
-        left: UIConstantValue.PADDING_5,
-        top: UIConstantValue.PADDING_2,
-        right: UIConstantValue.PADDING_5,
-        bottom: UIConstantValue.PADDING_2
-      })
-
-      Row({ space: UIConstantValue.SPACE_5 }) {
-        Row() {
-          ForEach(this.mineCardData.friendAvatarList, (avatarItem: string, index: number) => {
-            Image(avatarItem)
-              .width(UIConstantValue.WIDTH_18)
-              .height(UIConstantValue.HEIGHT_18)
-              .borderRadius(UIConstantValue.BORDER_RADIUS_50)
-
-          }, (index: number) => index.toString())
-        }
-
-        Row() {
-          if (this.account > 0) {
-            Text(this.account > 3 ? $r('app.string.more_friend_count', this.account) : $r('app.string.friend_count', this.account))
-              .fontSize(FontConstantValue.FONT_SIZE_12)
-              .fontColor($r('app.color.mine_card_font_color'))
-          } else {
-            Image($r('app.media.noNewStateIcon'))
-              .width(UIConstantValue.WIDTH_10)
-              .height(UIConstantValue.HEIGHT_10)
-              .objectFit(ImageFit.Contain)
-          }
-        }
-
-        if (this.account > 3) {
-          Row() {
-
-          }
-          .width(UIConstantValue.WIDTH_5)
-          .height(UIConstantValue.HEIGHT_5)
-          .borderRadius(UIConstantValue.BORDER_RADIUS_50)
-          .backgroundColor(Color.Red)
-        }
-      }
-      .border({
-        width: UIConstantValue.BORDER_WIDTH_0_5,
-        color: $r('app.color.border_color')
-      })
-      .borderRadius(UIConstantValue.BORDER_RADIUS_20)
-      .padding({
-        left: UIConstantValue.PADDING_5,
-        top: UIConstantValue.PADDING_2,
-        right: UIConstantValue.PADDING_5,
-        bottom: UIConstantValue.PADDING_2
-      })
-    }
+    // Row({ space: UIConstantValue.SPACE_10 }) {
+    //   Row() {
+    //     Image($r('app.media.mineTabAddStateIcon'))
+    //       .width(UIConstantValue.WIDTH_14)
+    //       .height(UIConstantValue.HEIGHT_14)
+    //     Text($r('app.string.state'))
+    //       .fontSize(FontConstantValue.FONT_SIZE_12)
+    //       .fontColor($r('app.color.mine_card_font_color'))
+    //   }
+    //   .border({
+    //     width: UIConstantValue.BORDER_WIDTH_0_5,
+    //     color: $r('app.color.border_color')
+    //   })
+    //   .borderRadius(UIConstantValue.BORDER_RADIUS_20)
+    //   .padding({
+    //     left: UIConstantValue.PADDING_5,
+    //     top: UIConstantValue.PADDING_2,
+    //     right: UIConstantValue.PADDING_5,
+    //     bottom: UIConstantValue.PADDING_2
+    //   })
+    //
+    //   Row({ space: UIConstantValue.SPACE_5 }) {
+    //     Row() {
+    //       ForEach(this.mineCardData.friendAvatarList, (avatarItem: string, index: number) => {
+    //         Image(avatarItem)
+    //           .width(UIConstantValue.WIDTH_18)
+    //           .height(UIConstantValue.HEIGHT_18)
+    //           .borderRadius(UIConstantValue.BORDER_RADIUS_50)
+    //
+    //       }, (index: number) => index.toString())
+    //     }
+    //
+    //     Row() {
+    //       if (this.count > 0) {
+    //         Text(this.count > 3 ? $r('app.string.more_friend_count', this.count) : $r('app.string.friend_count', this.count))
+    //           .fontSize(FontConstantValue.FONT_SIZE_12)
+    //           .fontColor($r('app.color.mine_card_font_color'))
+    //       } else {
+    //         Image($r('app.media.noNewStateIcon'))
+    //           .width(UIConstantValue.WIDTH_10)
+    //           .height(UIConstantValue.HEIGHT_10)
+    //           .objectFit(ImageFit.Contain)
+    //       }
+    //     }
+    //
+    //     if (this.count > 3) {
+    //       Row() {
+    //
+    //       }
+    //       .width(UIConstantValue.WIDTH_5)
+    //       .height(UIConstantValue.HEIGHT_5)
+    //       .borderRadius(UIConstantValue.BORDER_RADIUS_50)
+    //       .backgroundColor(Color.Red)
+    //     }
+    //   }
+    //   .border({
+    //     width: UIConstantValue.BORDER_WIDTH_0_5,
+    //     color: $r('app.color.border_color')
+    //   })
+    //   .borderRadius(UIConstantValue.BORDER_RADIUS_20)
+    //   .padding({
+    //     left: UIConstantValue.PADDING_5,
+    //     top: UIConstantValue.PADDING_2,
+    //     right: UIConstantValue.PADDING_5,
+    //     bottom: UIConstantValue.PADDING_2
+    //   })
+    // }
   }
 }

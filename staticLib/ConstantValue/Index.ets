@@ -7,3 +7,7 @@ export { default as PermissionRequestUtil } from './src/main/ets/permissionsRequ
 export { default as BusinessConstantValue } from './src/main/ets/constant/BusinessConstantValue'
 
 export { default as RouterUrlConstantValue } from './src/main/ets/constant/RouterConstantValue'
+
+export { default as RequestURIConstantValue } from './src/main/ets/constant/RequestURIConstantValue'
+
+export { default as AppStorageKey} from './src/main/ets/constant/AppStorageKey'

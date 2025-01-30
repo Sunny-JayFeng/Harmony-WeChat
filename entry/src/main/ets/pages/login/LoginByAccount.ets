@@ -1,7 +1,12 @@
 import ItemInput from '../register/RegisterPage'
 import { AgreeButton, ChangeLoginType, CloseIcon, LoginTypeText, SelfHelpText, StatementTip } from './BaseComponent'
 import { router } from '@kit.ArkUI';
-import { RouterUrlConstantValue, UIConstantValue } from 'constantvalue';
+import { RequestURIConstantValue, RouterUrlConstantValue, UIConstantValue } from 'constantvalue';
+import { request } from '../../request/request';
+import { ResponseUserData } from '../../type/responseDataTypes/responseDataTypes';
+import { AxiosError } from '@ohos/axios';
+import dataPreferences from '@ohos.data.preferences'
+import { User } from '../../type/serviceDataTypes/serviceDataTypes';
 
 @Entry
 @Component
@@ -10,14 +15,14 @@ struct LoginByAccount {
   @State passwordValue: string = '';
 
   buttonClickable(): boolean {
-    return this.accountValueIsRight() && this.passwordValueIsRight()
+    return this.accountFormatIsRight() && this.passwordFormatIsRight()
   }
 
-  accountValueIsRight(): boolean {
+  accountFormatIsRight(): boolean {
     return this.accountValue !== ''
   }
 
-  passwordValueIsRight(): boolean {
+  passwordFormatIsRight(): boolean {
     return this.passwordValue !== ''
   }
 
@@ -37,7 +42,40 @@ struct LoginByAccount {
 
   // 点击同意并登录
   onLoginButtonClicked() {
-
+    request.post<ResponseUserData, ResponseUserData>(RequestURIConstantValue.REQUEST_LOGIN_BY_ACCOUNT_AND_PASSWORD, {
+      account: this.accountValue,
+      password: this.passwordValue
+    })
+      .then((responseData: ResponseUserData) => {
+        let responseUser: User = responseData.user
+        if (responseData.requestSuccess && responseUser) {
+          // 登录成功, 持久化 id 到本地
+          let options: dataPreferences.Options = { name: 'userID' }
+          let preferences: dataPreferences.Preferences = dataPreferences.getPreferencesSync(getContext(), options);
+          preferences.putSync('currentUserID', responseUser.id)
+          preferences.flush();
+          // 跳转到主页
+          router.replaceUrl({
+            url: RouterUrlConstantValue.MAIN_PAGE
+          })
+          return;
+        }
+        // 账号不存在
+        if (responseData.failCode === 1) {
+          AlertDialog.show({ message: $r('app.string.account_not_exist') })
+          return;
+        }
+        // 密码错误
+        if (responseData.failCode === 2) {
+          AlertDialog.show({ message: $r('app.string.password_error') })
+          return;
+        }
+        // 打印日志信息
+        AlertDialog.show({ message: JSON.stringify(responseData, null, 2) })
+      })
+      .catch((error: AxiosError) => {
+        AlertDialog.show({ message: JSON.stringify(error, null, 2) })
+      })
   }
 
   build() {
@@ -98,7 +136,11 @@ struct LoginByAccount {
         AgreeButton({
           buttonText: $r("app.string.agree_and_login"),
           buttonClickable: this.buttonClickable()
-        }).onClick(this.onLoginButtonClicked)
+        }).onClick(() => {
+          if (this.buttonClickable()) {
+            this.onLoginButtonClicked()
+          }
+        })
       }
       .width(UIConstantValue.WIDTH_PERCENT_100)
       .justifyContent(FlexAlign.Center)

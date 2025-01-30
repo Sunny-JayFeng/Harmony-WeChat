@@ -1,5 +1,5 @@
 import { FontConstantValue, UIConstantValue } from "constantvalue"
-import { FoundItemDataType } from "../../uiDataTypes/UIDataType"
+import { FoundItemDataType } from "../../type/uiDataTypes/UIDataType"
 import FoundContentListDataViewModel from "../../uiDataViewModels/found/FoundContentListDataViewModel"
 import FoundItem from "./FoundItem"
 

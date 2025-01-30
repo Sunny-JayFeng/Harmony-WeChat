@@ -1,4 +1,4 @@
-import { IContactListDataType } from "../../uiDataTypes/UIDataType";
+import { IContactListDataType } from "../../type/uiDataTypes/UIDataType";
 import ContactClassifyDataViewModel from "./ContactClassifyDataViewModel";
 
 /**

@@ -1,5 +1,5 @@
 import { FontConstantValue, UIConstantValue } from "constantvalue";
-import { MineItemDataType } from "../../uiDataTypes/UIDataType";
+import { MineItemDataType } from "../../type/uiDataTypes/UIDataType";
 
 @Component
 export default struct MineItem {

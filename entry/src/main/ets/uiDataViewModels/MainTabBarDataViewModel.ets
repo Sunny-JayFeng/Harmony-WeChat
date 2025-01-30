@@ -1,4 +1,4 @@
-import { IMainTabBarDataType } from "../uiDataTypes/UIDataType";
+import { IMainTabBarDataType } from "../type/uiDataTypes/UIDataType";
 
 export default class MainTabBarDataViewModel {
   private static readonly mainTabBarDataList: IMainTabBarDataType[] = [

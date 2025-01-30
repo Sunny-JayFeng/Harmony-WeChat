@@ -1,6 +1,6 @@
 import FontConstantValue from 'constantvalue/src/main/ets/constant/FontConstantValue';
 import UIConstantValue from 'constantvalue/src/main/ets/constant/UIConstantValue';
-import { ContactDataType, IContactListDataType } from '../../uiDataTypes/UIDataType';
+import { ContactDataType, IContactListDataType } from '../../type/uiDataTypes/UIDataType';
 import ContactListDataViewModel from '../../uiDataViewModels/contact/ContactListDataViewModel';
 import ContactItem from './ContactItem';
 
